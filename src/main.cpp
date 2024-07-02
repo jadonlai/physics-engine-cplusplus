@@ -1,18 +1,45 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "add.h"
+#include "math.h"
+#include "converter.h"
+#include "vector.h"
+
+// Window size in 720p
+#define WINDOW_X 1280
+#define WINDOW_Y 720
 
 int main()
 {
-    int result = add(2, 3);
+    Converter converter;
 
-    std::cout << result;
+    Vector vec1(3.f, 5.f);
+    Vector normalized = normalize(vec1);
 
-    sf::RenderWindow window(sf::VideoMode(640, 480), "SFML Application");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Physics Engine");
+    sf::View view;
+    view.setCenter(0, 0);
+    view.setSize(WINDOW_X / 20, WINDOW_Y / 20);
+    window.setView(view);
+
+    // Circle example
     sf::CircleShape shape;
-    shape.setRadius(40.f);
-    shape.setPosition(100.f, 100.f);
-    shape.setFillColor(sf::Color::Cyan);
+    shape.setRadius(1.f);
+    shape.setPosition(0.f, 0.f);
+    shape.setOrigin(shape.getRadius(), shape.getRadius());
+    shape.setFillColor(sf::Color::Black);
+    shape.setOutlineColor(sf::Color::Blue);
+    shape.setOutlineThickness(0.1f);
+
+    // Line examples
+    sf::VertexArray line1(sf::LineStrip, 2);
+    line1[0].position = sf::Vector2f(0.f, 0.f);
+    line1[1].position = converter.ToVector2f(vec1);
+
+    sf::VertexArray line2(sf::LineStrip, 2);
+    line2[0].position = sf::Vector2f(0.f, 0.f);
+    line2[0].color = sf::Color::Green;
+    line2[1].position = converter.ToVector2f(normalized);
+    line2[1].color = sf::Color::Green;
 
     while (window.isOpen())
     {
@@ -26,6 +53,8 @@ int main()
 
         window.clear();
         window.draw(shape);
+        window.draw(line1);
+        window.draw(line2);
         window.display();
     }
 }
